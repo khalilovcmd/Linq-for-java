@@ -50,8 +50,14 @@ try {
                 }
             }).ToList();
 
-    // get items where it contains an object like the one supplied (equal in values, not in reference) 
-    boolean res6 = new Q<Demo>(demos).Contains(new Demo("a2", "b2"));
+	// get items where it contains an object like the one supplied (equal in values, not in reference) 
+	boolean res6 = new Q<Demo>(demos).Contains(new Demo("a2", "b2"));
+
+	// get items where it has property "first" = value "a", and property "second" = "b"
+	boolean res8 = new Q<Demo>(demos).Where("first", "a").Contains(new Demo("a", "b4"));
+
+	// get all items where property "first" = "a", then get the last item
+	Demo res9 = new Q<Demo>(demos).Where("first", "a").Last();	
 
 } catch (ReflectionOperationException ex) {
 } catch (IllegalArgumentException ex) {
