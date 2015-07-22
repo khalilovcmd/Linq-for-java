@@ -126,7 +126,6 @@ public class Q<T> {
             // using the comparison function (like a delegate in C#) which implemente QCompare class
             if (compare.Is(o)) {
                 result.add(o);
-                break;
             }
         }
 
