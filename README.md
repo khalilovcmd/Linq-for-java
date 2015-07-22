@@ -3,7 +3,7 @@ a set of linq extensions for Java to ease list query and manipulation
 ## Installation
 You can add the LINQ Maven project to your NetBeans and add it as a dependency to your Maven project
 ## Usage
-```
+```java
 // a mock class
 public class Demo {
 
