@@ -16,6 +16,19 @@ public class Demo {
     }
 }
 
+// a second mock class
+
+public class DemoSecond {
+
+    public String third;
+    public String fourth;
+
+    public DemoSecond(String third, String fourth) {
+        this.third = third;
+        this.fourth = fourth;
+    }
+}
+
 ArrayList<Demo> demos = new ArrayList<>();
 demos.add(new Demo("a", "b"));
 demos.add(new Demo("a1", "b1"));
@@ -58,6 +71,15 @@ try {
 
 	// get all items where property "first" = "a", then get the last item
 	Demo res9 = new Q<Demo>(demos).Where("first", "a").Last();	
+    
+    // transform all items into another list of type DemoSecond
+    AbstractList<DemoSecond> res10 = new Q<Demo>(demos).select(new QSelect<Demo, DemoSecond>() {
+
+        @Override
+        public DemoSecond Select(Demo o) {
+            return new DemoSecond(o.first + ":1111", o.second + ":1111");
+        }
+    });
 
 } catch (ReflectionOperationException ex) {
 } catch (IllegalArgumentException ex) {
