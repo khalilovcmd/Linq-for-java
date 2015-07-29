@@ -9,8 +9,6 @@ package com.extensions.linq;
  *
  * @author tkhalilov
  */
-public interface QCompare<T> {
-
-    boolean is(T value);
-
+public interface QSelect<T, V> {
+    V Select(T o);
 }

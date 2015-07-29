@@ -3,14 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.extensions.linq;
+package com.extensions.linq.utilities;
 
 /**
  *
  * @author tkhalilov
  */
-public interface QCompare<T> {
-
-    boolean is(T value);
-
+public class Utility {
+    
 }

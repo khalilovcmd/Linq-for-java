@@ -5,7 +5,7 @@
  */
 package com.extensions.linq;
 
-import com.extensions.exceptions.ReflectionOperationException;
+import com.extensions.linq.exceptions.ReflectionOperationException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.*;
@@ -32,27 +32,27 @@ public class Q<T> {
         this.list = new ArrayList<>(list);
     }
 
-    public AbstractList<T> ToList() {
+    public AbstractList<T> toList() {
         return list;
     }
 
-    public T[] ToArray() {
+    public T[] toArray() {
         return getArray(list);
     }
 
-    public T First() {
+    public T first() {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    public T Last() {
+    public T last() {
         return list.isEmpty() ? null : list.get(list.size() - 1);
     }
 
-    public int Count() {
+    public int count() {
         return list.size();
     }
 
-    public Q<T> Where(String propertyName, Object value) throws ReflectionOperationException, IllegalArgumentException {
+    public Q<T> where(String propertyName, Object value) throws ReflectionOperationException, IllegalArgumentException {
 
         if (isNull(propertyName)) {
             throw new IllegalArgumentException("'propertyName' argument must not be null.");
@@ -79,7 +79,7 @@ public class Q<T> {
         return this;
     }
 
-    public Q<T> Where(HashMap<String, Object> properties) throws ReflectionOperationException, IllegalArgumentException {
+    public Q<T> where(HashMap<String, Object> properties) throws ReflectionOperationException, IllegalArgumentException {
 
         if (isNull(properties)) {
             throw new IllegalArgumentException("'properties' argument must not be null.");
@@ -112,7 +112,7 @@ public class Q<T> {
         return this;
     }
 
-    public Q<T> Where(QCompare compare) throws IllegalArgumentException {
+    public Q<T> where(QCompare compare) throws IllegalArgumentException {
 
         if (isNull(compare)) {
             throw new IllegalArgumentException("'compare' argument must not be null.");
@@ -124,7 +124,7 @@ public class Q<T> {
         for (T o : list) {
 
             // using the comparison function (like a delegate in C#) which implemente QCompare class
-            if (compare.Is(o)) {
+            if (compare.is(o)) {
                 result.add(o);
             }
         }
@@ -134,7 +134,27 @@ public class Q<T> {
         return this;
     }
 
-    public boolean Contains(T value) throws ReflectionOperationException, IllegalArgumentException {
+    // TODO:
+    public Q<T> all(QSelect select) {
+        return null;
+    }
+
+    public <V> AbstractList<V> select(QSelect<T, V> select) throws IllegalArgumentException {
+
+        AbstractList<V> result = new ArrayList<>();
+
+        if (isNull(select)) {
+            throw new IllegalArgumentException("'select' argument must not be null.");
+        }
+
+        for (T o : list) {
+            result.add(select.Select(o));
+        }
+
+        return result;
+    }
+
+    public boolean contains(T value) throws ReflectionOperationException, IllegalArgumentException {
 
         if (isNull(value)) {
             throw new IllegalArgumentException("'value' argument must not be null.");
@@ -182,11 +202,11 @@ public class Q<T> {
         return returnValue;
     }
 
-    public boolean Any() {
+    public boolean any() {
         return list.size() > 0;
     }
 
-    public boolean Any(String propertyName, Object value) throws ReflectionOperationException, IllegalArgumentException {
+    public boolean any(String propertyName, Object value) throws ReflectionOperationException, IllegalArgumentException {
 
         if (isNull(propertyName)) {
             throw new IllegalArgumentException("'propertyName' argument must not be null.");
@@ -209,7 +229,7 @@ public class Q<T> {
         return returnValue;
     }
 
-    public boolean Any(HashMap<String, Object> properties) throws ReflectionOperationException, IllegalArgumentException {
+    public boolean any(HashMap<String, Object> properties) throws ReflectionOperationException, IllegalArgumentException {
 
         if (isNull(properties)) {
             throw new IllegalArgumentException("'properties' argument must not be null.");
@@ -241,7 +261,7 @@ public class Q<T> {
         return returnValue;
     }
 
-    public boolean Any(QCompare compare) throws IllegalArgumentException {
+    public boolean any(QCompare compare) throws IllegalArgumentException {
 
         if (isNull(compare)) {
             throw new IllegalArgumentException("'compare' argument must not be null.");
@@ -253,7 +273,7 @@ public class Q<T> {
         for (T o : list) {
 
             // using the comparison function (like a delegate in C#) which implemente QCompare class
-            if (compare.Is(o)) {
+            if (compare.is(o)) {
 
                 // if any element found, we return and break
                 returnValue = true;
@@ -277,14 +297,18 @@ public class Q<T> {
             // get field via reflection
             Field field = real.getClass().getDeclaredField(property);
 
-            // check if the field is private (that means not accessible)
-            if (!field.isAccessible()) {
-                field.setAccessible(true);   // if private, allow the field's value to be accessed
-            }
+            if (field != null) {
 
-            // compare between the field's value and the passed value
-            if (field.get(real).equals(value)) {
-                returnValue = true;
+                // check if the field is private (that means not accessible)
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);   // if private, allow the field's value to be accessed
+                }
+
+                // compare between the field's value and the passed value
+                if (field.get(real).equals(value)) {
+                    returnValue = true;
+                }
+
             }
         } catch (IllegalArgumentException ex) {
             throw ex;
@@ -329,6 +353,7 @@ public class Q<T> {
     }
 
     private T[] getArray(AbstractList<T> value) {
+
         T[] result = (T[]) new Object[value.size()];
 
         for (int i = 0; i < value.size(); i++) {
