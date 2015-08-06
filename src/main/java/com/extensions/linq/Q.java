@@ -32,14 +32,6 @@ public class Q<T> {
         this.list = new ArrayList<>(list);
     }
 
-    public AbstractList<T> toList() {
-        return list;
-    }
-
-    public T[] toArray() {
-        return getArray(list);
-    }
-
     public T first() {
         return list.isEmpty() ? null : list.get(0);
     }
@@ -134,12 +126,56 @@ public class Q<T> {
         return this;
     }
 
-    // TODO:
-    public Q<T> all(QSelect select) {
-        return null;
+    public boolean all(QCompare compare) {
+
+        if (isNull(compare)) {
+            throw new IllegalArgumentException("'compare' argument must not be null.");
+        }
+
+        boolean returnValue = true;
+
+        for (T o : list) {
+            if (!compare.is(o)) {
+                returnValue = false;
+                break;
+            }
+        }
+
+        return returnValue;
     }
 
-    public <V> AbstractList<V> select(QSelect<T, V> select) throws IllegalArgumentException {
+    public Q<T> add(T value) {
+
+        return this;
+    }
+
+    public Q<T> addAt(T value, int index) {
+
+        if (index < 0) {
+            throw new IllegalArgumentException("'index' must be zero or greater.");
+        }
+
+        if (isNull(value)) {
+            throw new IllegalArgumentException("'value' argument must not be null.");
+        }
+
+        list.add(index, value);
+
+        return this;
+    }
+
+    public Q<T> addRange(AbstractList<T> values) {
+
+        if (isNull(values)) {
+            throw new IllegalArgumentException("'value' argument must not be null.");
+        }
+
+        list.addAll(values);
+
+        return this;
+    }
+    
+    public <V> Q<V> select(QSelect<T, V> select) throws IllegalArgumentException {
 
         AbstractList<V> result = new ArrayList<>();
 
@@ -148,10 +184,10 @@ public class Q<T> {
         }
 
         for (T o : list) {
-            result.add(select.Select(o));
+            result.add(select.select(o));
         }
 
-        return result;
+        return new Q<V>(result);
     }
 
     public boolean contains(T value) throws ReflectionOperationException, IllegalArgumentException {
@@ -282,6 +318,14 @@ public class Q<T> {
         }
 
         return returnValue;
+    }
+
+    public AbstractList<T> toList() {
+        return list;
+    }
+
+    public T[] toArray() {
+        return getArray(list);
     }
 
     private boolean isNull(Object value) {

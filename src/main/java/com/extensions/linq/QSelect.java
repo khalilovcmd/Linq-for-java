@@ -10,5 +10,5 @@ package com.extensions.linq;
  * @author tkhalilov
  */
 public interface QSelect<T, V> {
-    V Select(T o);
+    V select(T o);
 }
